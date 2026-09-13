@@ -80,8 +80,10 @@ A monthly GitHub Action rebuilds it and opens a pull request when something chan
 ## Deployment
 
 The site is deployed to GitHub Pages by `.github/workflows/deploy-pages.yml` on every
-push to `main`. One-time setup in the repository: **Settings → Pages → Build and
-deployment → Source: GitHub Actions**.
+push to `main`. The workflow enables Pages (source: GitHub Actions) on its first run; if
+that ever fails, set it once by hand under **Settings → Pages → Build and deployment →
+Source: GitHub Actions**, or run
+`gh api -X POST repos/<owner>/<repo>/pages -f build_type=workflow`.
 
 ## Roadmap
 

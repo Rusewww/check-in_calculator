@@ -1,0 +1,44 @@
+name: Refresh airport data
+
+on:
+  schedule:
+    # 05:17 UTC on the first day of every month
+    - cron: '17 5 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - run: npm run data:build
+      - name: Validate the new dataset
+        run: npm test
+      - name: Detect changes
+        id: diff
+        run: |
+          if git diff --quiet -- public/data/airports.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            git checkout -- public/data
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: peter-evans/create-pull-request@v8
+        if: steps.diff.outputs.changed == 'true'
+        with:
+          commit-message: 'data: refresh airport dataset'
+          branch: chore/refresh-airports
+          title: 'Refresh airport dataset'
+          body: |
+            Automated monthly refresh from OurAirports and mwgg/Airports.
+            The dataset passed the test suite. Review the diff of `public/data/airports.json` before merging.
+          labels: data

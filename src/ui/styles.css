@@ -1,0 +1,571 @@
+/*
+ * Theme: every colour is a light-dark() pair, so the palette follows `color-scheme`.
+ * By default that is the OS setting; the settings dialog stamps data-theme="light" or
+ * "dark" on <html> to force one.
+ */
+:root {
+  color-scheme: light dark;
+  --bg: light-dark(#f4f6f9, #0e1117);
+  --surface: light-dark(#ffffff, #161b24);
+  --surface-2: light-dark(#eef2f7, #1d2331);
+  --text: light-dark(#171a21, #e7eaf0);
+  --muted: light-dark(#5f6675, #9aa4b5);
+  --border: light-dark(#d8dde6, #2a3242);
+  --accent: light-dark(#1d5cf0, #6f9dff);
+  --accent-hover: light-dark(#164bc4, #8db1ff);
+  --on-accent: light-dark(#ffffff, #0b1222);
+  --accent-soft: light-dark(#e6eefe, #1b2842);
+  --danger: light-dark(#b71c1c, #ff8080);
+  --danger-soft: light-dark(#fdecec, #3a1d1d);
+  --success: light-dark(#1a6b34, #6fd88c);
+  --success-soft: light-dark(#e4f5e9, #173322);
+  --warn: light-dark(#7a4f00, #f3c85a);
+  --warn-soft: light-dark(#fff3d1, #3a2f12);
+  --shadow-near: light-dark(rgb(0 0 0 / 5%), rgb(0 0 0 / 40%));
+  --shadow-far: light-dark(rgb(0 0 0 / 6%), rgb(0 0 0 / 35%));
+  --backdrop: light-dark(rgb(20 24 32 / 45%), rgb(0 0 0 / 60%));
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 1px 2px var(--shadow-near), 0 10px 30px var(--shadow-far);
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font);
+  line-height: 1.45;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.app {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 28px 16px 48px;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.app-header-text {
+  min-width: 0;
+}
+
+.app-header-actions {
+  flex: 0 0 auto;
+  padding-top: 4px;
+}
+
+.btn-icon {
+  width: 42px;
+  min-height: 42px;
+  padding: 0;
+  justify-content: center;
+  color: var(--muted);
+}
+
+.btn-icon:hover {
+  color: var(--text);
+}
+
+.btn-icon .icon {
+  display: inline-flex;
+}
+
+.app-title {
+  font-size: 1.7rem;
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
+}
+
+.app-tagline {
+  margin: 0;
+  color: var(--muted);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px;
+}
+
+.form-grid {
+  display: grid;
+  gap: 22px;
+}
+
+@media (min-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .field-wide {
+    grid-column: 1 / -1;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.field-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.field-error {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--danger);
+}
+
+.input {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  min-height: 44px;
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.input:disabled {
+  opacity: 0.6;
+}
+
+.combobox {
+  position: relative;
+}
+
+.listbox {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.option {
+  display: grid;
+  grid-template-columns: 3.4em 1fr;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.option.is-active,
+.option:hover {
+  background: var(--accent-soft);
+}
+
+.option-code {
+  font-family: var(--mono);
+  font-weight: 700;
+  align-self: center;
+}
+
+.option-name {
+  display: block;
+}
+
+.option-place {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.airport-card {
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  display: grid;
+  gap: 2px;
+}
+
+.airport-card strong {
+  font-size: 1rem;
+}
+
+.tabs {
+  display: inline-flex;
+  align-self: flex-start;
+  background: var(--surface-2);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.tab {
+  font: inherit;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 6px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.tab[aria-selected='true'] {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 12%);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--accent);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+/* Chips share the row equally so the presets span the whole field. */
+.chip {
+  flex: 1 1 5.5em;
+  text-align: center;
+  font: inherit;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 7px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+
+.chip:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.custom-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.input-with-suffix {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-number {
+  width: 7.5em;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.btn {
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 9px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-decoration: none;
+  min-height: 40px;
+}
+
+.btn:hover {
+  background: var(--surface-2);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.btn-link {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  padding: 2px 4px;
+  min-height: 0;
+  text-decoration: underline;
+  align-self: flex-start;
+}
+
+.btn-link:hover {
+  background: transparent;
+}
+
+.result {
+  margin-top: 20px;
+}
+
+.result-title {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.times {
+  display: grid;
+  gap: 14px;
+}
+
+@media (min-width: 640px) {
+  .times {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.time-block {
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+}
+
+.time-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.time-value {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.status {
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.status-before-open {
+  background: var(--accent-soft);
+}
+
+.status-open {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.status-departed {
+  background: var(--surface-2);
+  color: var(--muted);
+}
+
+.countdown {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.2rem;
+}
+
+.notice {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--warn-soft);
+  color: var(--warn);
+  font-size: 0.9rem;
+}
+
+.meta-line {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.placeholder {
+  color: var(--muted);
+  text-align: center;
+  padding: 24px 12px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  margin-top: 20px;
+}
+
+.banner {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--danger-soft);
+  color: var(--danger);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.app-footer {
+  margin-top: 28px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.app-footer p {
+  margin: 6px 0;
+}
+
+.app-footer a {
+  color: inherit;
+}
+
+.settings-dialog {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  padding: 0;
+  width: min(92vw, 380px);
+  box-shadow: var(--shadow);
+}
+
+.settings-dialog::backdrop {
+  background: var(--backdrop);
+}
+
+.settings-form {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+}
+
+.settings-title {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.settings-group {
+  display: grid;
+  gap: 8px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.settings-group legend {
+  padding: 0;
+  margin-bottom: 4px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.radio-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

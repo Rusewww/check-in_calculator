@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-extension/
+.vite/
+
+# Test output
+coverage/
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.claude/launch.json
+.DS_Store
+Thumbs.db
+
+# Local env files
+.env
+.env.*
+!.env.example

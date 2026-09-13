@@ -1,4 +1,4 @@
-# Check-in Calculator
+# <img src="public/logo-light.svg" alt="" width="36" height="36" align="top"> Check-in Calculator
 
 Find out exactly when online check-in opens for your flight, in the airport's time zone
 and in yours, and add that moment to your calendar.

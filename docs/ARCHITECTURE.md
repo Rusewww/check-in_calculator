@@ -281,6 +281,11 @@ The opening moment can be saved as a 30-minute event (`src/core/calendar.js`):
 The UI implements the Claude Design project "Check-In Calculator UI mockups"
 (`Mockups.dc.html`, screens 1a–1d; screen 1e is the future extension popup):
 
+- Brand mark: a paper plane on a rounded tile, supplied by the user as two logos. The
+  top bar renders one inline SVG (`src/ui/logo.js`) whose colours are theme tokens, so
+  the light theme shows the white plane on the dark-violet tile and the dark theme the
+  dark plane on the light-violet tile. Standalone copies: `public/logo-light.svg`,
+  `public/logo-dark.svg`; `public/favicon.svg` follows the OS colour scheme.
 - Type: Geist (UI) and Geist Mono (codes, times, labels) from Google Fonts, with system
   fallbacks.
 - Palette: warm neutrals (`#f7f5f2` / `#15130f` backgrounds, `#e2dcd3` / `#322d27`

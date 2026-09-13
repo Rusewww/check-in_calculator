@@ -20,6 +20,7 @@ import { mountPeriodPicker } from './components/PeriodPicker.js';
 import { mountTimeZoneSelect } from './components/TimeZoneSelect.js';
 import { mountResultPanel } from './components/ResultPanel.js';
 import { mountHeaderControls } from './components/HeaderControls.js';
+import { LOGO_SVG } from './logo.js';
 
 /**
  * @param {HTMLElement} root
@@ -67,6 +68,8 @@ export function mountApp(root, options) {
     const zoneSection = h('div', { class: 'section section--divided' });
     const resultCol = h('div', { class: 'result-col' });
     const dataUpdated = h('p', { hidden: true });
+    const brandMark = h('span', { class: 'brand-mark', 'aria-hidden': 'true' });
+    brandMark.innerHTML = LOGO_SVG; // static markup from logo.js, no user data
 
     root.append(
       h(
@@ -75,12 +78,7 @@ export function mountApp(root, options) {
         h(
           'header',
           { class: 'topbar' },
-          h(
-            'h1',
-            { class: 'brand' },
-            h('span', { class: 'brand-mark', 'aria-hidden': 'true' }),
-            t('appTitle'),
-          ),
+          h('h1', { class: 'brand' }, brandMark, t('appTitle')),
           controls,
         ),
         banner,

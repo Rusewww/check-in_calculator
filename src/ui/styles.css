@@ -31,6 +31,10 @@
   --shadow-near: light-dark(rgb(0 0 0 / 4%), rgb(0 0 0 / 30%));
   --shadow-far: light-dark(rgb(0 0 0 / 6%), rgb(0 0 0 / 55%));
   --seg-shadow: light-dark(rgb(0 0 0 / 12%), rgb(0 0 0 / 50%));
+  /* Brand mark: white plane on the dark-violet tile in light, dark plane on the light-violet tile in dark. */
+  --logo-bg: light-dark(#6a35e0, #a87dff);
+  --logo-plane: light-dark(#ffffff, #17140f);
+  --logo-fold: light-dark(#b39ae6, #5b4a8f);
   --font-sans: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
@@ -100,11 +104,16 @@ select {
 }
 
 .brand-mark {
+  display: inline-flex;
   width: 26px;
   height: 26px;
-  border-radius: 8px;
-  background: var(--accent);
   flex: none;
+}
+
+.brand-mark svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .topbar-controls {

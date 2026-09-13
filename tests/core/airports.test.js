@@ -151,13 +151,27 @@ const DATASET = {
       'L',
       1,
     ],
+    [
+      'ELS',
+      'FAEL',
+      'King Phalo Airport',
+      'East London',
+      'Eastern Cape',
+      'South Africa',
+      'ZA',
+      'Africa/Johannesburg',
+      -33.036,
+      27.826,
+      'L',
+      1,
+    ],
   ],
 };
 
 describe('decodeDataset', () => {
   it('maps rows to airport objects', () => {
     const airports = decodeDataset(DATASET);
-    expect(airports).toHaveLength(9);
+    expect(airports).toHaveLength(10);
     expect(airports[0]).toEqual({
       iata: 'LHR',
       icao: 'EGLL',
@@ -200,7 +214,7 @@ describe('createAirportIndex', () => {
     expect(index.byIata('lhr')?.name).toBe('London Heathrow Airport');
     expect(index.byIata(' KBP ')?.tz).toBe('Europe/Kyiv');
     expect(index.byIata('XXX')).toBeNull();
-    expect(index.size).toBe(9);
+    expect(index.size).toBe(10);
   });
 
   it('puts an exact IATA match first', () => {
@@ -219,6 +233,12 @@ describe('createAirportIndex', () => {
     expect(index.search('q')).toEqual([]);
   });
 
+  it('ranks names and cities that begin with the query above later-word matches', () => {
+    // "East London" contains the word, but the London airports start with it.
+    expect(index.search('lond').map((a) => a.iata)).toEqual(['LGW', 'LHR', 'LCY', 'ELS']);
+    expect(index.search('east lond')[0].iata).toBe('ELS');
+  });
+
   it('ranks a city match above a region match', () => {
     expect(index.search('new york').map((a) => a.iata)).toEqual(['JFK', 'ALB']);
     expect(index.search('york').map((a) => a.iata)).toEqual(['JFK', 'ALB']);
@@ -228,7 +248,7 @@ describe('createAirportIndex', () => {
   it('matches ICAO codes and words of the name, city and country', () => {
     expect(index.search('EGKK')[0].iata).toBe('LGW');
     expect(index.search('heathrow')[0].iata).toBe('LHR');
-    expect(index.search('london').map((a) => a.iata)).toEqual(['LGW', 'LHR', 'LCY']);
+    expect(index.search('london').map((a) => a.iata)).toEqual(['LGW', 'LHR', 'LCY', 'ELS']);
     expect(index.search('zurich')[0].iata).toBe('ZRH');
     expect(index.search('Zürich')[0].iata).toBe('ZRH');
     expect(index.search('nepal')[0].iata).toBe('LDN');

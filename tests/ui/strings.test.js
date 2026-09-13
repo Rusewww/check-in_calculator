@@ -28,7 +28,7 @@ describe('languages', () => {
 
 describe('t', () => {
   it('fills placeholders and leaves unknown ones visible', () => {
-    expect(t('airportTimeZone', { zone: 'Europe/London' })).toBe('Time zone: Europe/London');
+    expect(t('heroYourLabel', { city: 'Kyiv' })).toBe('Your time · Kyiv');
     expect(t('periodErrorRange', { min: 1 })).toBe('Enter a number between 1 and {max}.');
   });
   it('throws on a missing key', () => {
@@ -43,7 +43,8 @@ describe('t', () => {
   it('selects English plural forms', () => {
     expect(t('hoursCount', { n: 1 })).toBe('1 hour');
     expect(t('hoursCount', { n: 2 })).toBe('2 hours');
-    expect(t('presetDays', { n: 1 })).toBe('1 day');
+    expect(t('airportHits', { n: 1 })).toBe('1 hit');
+    expect(t('airportHits', { n: 4 })).toBe('4 hits');
   });
   it('selects Ukrainian plural forms (one / few / many)', () => {
     setLanguage('uk');

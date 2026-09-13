@@ -22,14 +22,11 @@ export function mountTimeZoneSelect(container, { store, zones, deviceZone }) {
   const select = /** @type {HTMLSelectElement} */ (
     h('select', { id: 'zone-select', class: 'input', 'aria-label': t('zoneSelectLabel') })
   );
-  const useDevice = h('button', { type: 'button', class: 'btn btn-link' }, t('zoneUseDevice'));
 
-  // The select sits directly under the label so it lines up with the departure input.
   container.append(
-    h('label', { class: 'label', for: 'zone-select' }, t('zoneLabel')),
+    h('label', { class: 'eyebrow', for: 'zone-select' }, t('zoneLabel')),
     select,
     h('label', { class: 'checkbox-row', for: 'zone-follow' }, follow, followText),
-    useDevice,
   );
 
   const now = Date.now();
@@ -77,9 +74,6 @@ export function mountTimeZoneSelect(container, { store, zones, deviceZone }) {
   });
   select.addEventListener('change', () => {
     store.set({ userZone: select.value, followAirportZone: false });
-  });
-  useDevice.addEventListener('click', () => {
-    store.set({ userZone: deviceZone, followAirportZone: false });
   });
 
   /** @param {import('../state.js').AppState} state */

@@ -1,8 +1,8 @@
 // @ts-check
 /**
- * Assembles the application: layout, state, components, data loading, URL sync and
- * user settings (theme, language). Used by the website entry point and, later, by the
- * Chrome extension popup.
+ * Assembles the application: top bar, inputs panel, result column, data loading,
+ * URL sync and user settings (theme, language). Used by the website entry point and,
+ * later, by the Chrome extension popup.
  * @module ui/app
  */
 import { h } from './dom.js';
@@ -19,7 +19,7 @@ import { mountDepartureField } from './components/DepartureField.js';
 import { mountPeriodPicker } from './components/PeriodPicker.js';
 import { mountTimeZoneSelect } from './components/TimeZoneSelect.js';
 import { mountResultPanel } from './components/ResultPanel.js';
-import { mountSettingsButton } from './components/SettingsDialog.js';
+import { mountHeaderControls } from './components/HeaderControls.js';
 
 /**
  * @param {HTMLElement} root
@@ -49,9 +49,8 @@ export function mountApp(root, options) {
   /**
    * Builds the UI on top of the store. Called once, and again after a language change
    * because components render their text when they mount.
-   * @param {{ settingsOpen?: boolean }} [opts]
    */
-  function renderShell({ settingsOpen = false } = {}) {
+  function renderShell() {
     for (const dispose of disposers) dispose();
     disposers = [];
     root.replaceChildren();
@@ -60,13 +59,13 @@ export function mountApp(root, options) {
     document.title = t('appTitle');
     const locale = resolveLocale(settings.language);
 
-    const headerActions = h('div', { class: 'app-header-actions' });
+    const controls = h('div', { class: 'topbar-controls' });
     const banner = h('div', { class: 'banner', role: 'alert', hidden: true });
-    const airportField = h('div', { class: 'field field-wide' });
-    const departureField = h('div', { class: 'field' });
-    const zoneField = h('div', { class: 'field' });
-    const periodField = h('div', { class: 'field field-wide' });
-    const resultHost = h('div');
+    const airportSection = h('div', { class: 'section' });
+    const departureSection = h('div', { class: 'section' });
+    const periodSection = h('div', { class: 'section' });
+    const zoneSection = h('div', { class: 'section section--divided' });
+    const resultCol = h('div', { class: 'result-col' });
     const dataUpdated = h('p', { hidden: true });
 
     root.append(
@@ -75,33 +74,36 @@ export function mountApp(root, options) {
         { class: 'app' },
         h(
           'header',
-          { class: 'app-header' },
+          { class: 'topbar' },
           h(
-            'div',
-            { class: 'app-header-text' },
-            h('h1', { class: 'app-title' }, t('appTitle')),
-            h('p', { class: 'app-tagline' }, t('appTagline')),
+            'h1',
+            { class: 'brand' },
+            h('span', { class: 'brand-mark', 'aria-hidden': 'true' }),
+            t('appTitle'),
           ),
-          headerActions,
+          controls,
         ),
         banner,
         h(
-          'form',
-          {
-            class: 'card form-grid',
-            novalidate: true,
-            onsubmit: (/** @type {Event} */ event) => event.preventDefault(),
-          },
-          airportField,
-          departureField,
-          zoneField,
-          periodField,
+          'main',
+          { class: 'layout' },
+          h(
+            'form',
+            {
+              class: 'panel',
+              novalidate: true,
+              onsubmit: (/** @type {Event} */ event) => event.preventDefault(),
+            },
+            airportSection,
+            departureSection,
+            periodSection,
+            zoneSection,
+          ),
+          resultCol,
         ),
-        resultHost,
         h(
           'footer',
           { class: 'app-footer' },
-          h('p', {}, t('footerPrivacy')),
           h('p', {}, t('footerData')),
           dataUpdated,
           options.repoUrl
@@ -124,6 +126,14 @@ export function mountApp(root, options) {
       }
     }
 
+    /** @param {import('./state.js').AppState} state */
+    function renderDimming(state) {
+      // The rest of the form waits, visually, until an airport is chosen.
+      for (const section of [departureSection, periodSection, zoneSection]) {
+        section.classList.toggle('is-dimmed', !state.airport);
+      }
+    }
+
     renderDataUpdated = () => {
       if (!dataGenerated) return;
       dataUpdated.textContent = t('footerDataUpdated', {
@@ -133,24 +143,22 @@ export function mountApp(root, options) {
     };
 
     disposers.push(
-      mountAirportSearch(airportField, { store }),
-      mountDepartureField(departureField, { store }),
-      mountTimeZoneSelect(zoneField, { store, zones, deviceZone }),
-      mountPeriodPicker(periodField, { store }),
-      mountResultPanel(resultHost, {
+      mountHeaderControls(controls, { settings, onChange: updateSettings }),
+      mountAirportSearch(airportSection, { store }),
+      mountDepartureField(departureSection, { store }),
+      mountPeriodPicker(periodSection, { store }),
+      mountTimeZoneSelect(zoneSection, { store, zones, deviceZone }),
+      mountResultPanel(resultCol, {
         store,
         deviceZone,
         locale,
         getShareUrl: () => window.location.href,
       }),
-      mountSettingsButton(headerActions, {
-        settings,
-        onChange: updateSettings,
-        open: settingsOpen,
-      }),
       store.subscribe(renderBanner),
+      store.subscribe(renderDimming),
     );
     renderBanner(store.get());
+    renderDimming(store.get());
     renderDataUpdated();
   }
 
@@ -162,7 +170,7 @@ export function mountApp(root, options) {
     applyTheme(settings.theme);
     if (languageChanged) {
       setLanguage(settings.language);
-      renderShell({ settingsOpen: true });
+      renderShell();
     }
   }
 

@@ -1,6 +1,7 @@
 // @ts-check
 /**
- * Check-in window picker: Hours/Days tabs, preset chips and a custom number.
+ * Check-in window picker: Hours/Days switch, a row of preset buttons and an inline
+ * custom-value box.
  * @module ui/components/PeriodPicker
  */
 import { h } from '../dom.js';
@@ -28,7 +29,7 @@ export function mountPeriodPicker(container, { store }) {
         type: 'button',
         role: 'tab',
         id: `period-tab-${unit}`,
-        class: 'tab',
+        class: 'seg-btn',
         'aria-selected': 'false',
         'aria-controls': 'period-panel',
         onclick: () => store.set((state) => applyPeriodUnit(state, unit)),
@@ -38,38 +39,36 @@ export function mountPeriodPicker(container, { store }) {
   );
   const tablist = h(
     'div',
-    { class: 'tabs', role: 'tablist', 'aria-label': t('periodLabel') },
+    { class: 'segmented', role: 'tablist', 'aria-label': t('periodLabel') },
     tabs,
   );
-  const chips = h('div', { class: 'chips', role: 'group', 'aria-label': t('presetsLabel') });
   const custom = /** @type {HTMLInputElement} */ (
     h('input', {
       id: 'period-custom',
-      class: 'input input-number',
       type: 'number',
       inputmode: 'numeric',
       min: '1',
       step: '1',
       placeholder: t('customPlaceholder'),
+      'aria-label': t('customLabel'),
       'aria-describedby': 'period-error',
     })
   );
-  const suffix = h('span', { class: 'field-hint' });
+  const unit = h('span', { class: 'custom-unit' });
+  const customBox = h('label', { class: 'custom-box', for: 'period-custom' }, custom, unit);
+  const presets = h('div', { class: 'presets', role: 'group', 'aria-label': t('presetsLabel') });
   const error = h('p', { id: 'period-error', class: 'field-error', role: 'alert', hidden: true });
   const panel = h(
     'div',
     { id: 'period-panel', role: 'tabpanel', 'aria-labelledby': 'period-tab-hours' },
-    chips,
-    h(
-      'div',
-      { class: 'custom-row' },
-      h('label', { class: 'label', for: 'period-custom' }, t('customLabel')),
-      h('div', { class: 'input-with-suffix' }, custom, suffix),
-    ),
+    presets,
     error,
   );
 
-  container.append(h('p', { class: 'label' }, t('periodLabel')), tablist, panel);
+  container.append(
+    h('div', { class: 'section-head' }, h('p', { class: 'eyebrow' }, t('periodLabel')), tablist),
+    panel,
+  );
 
   custom.addEventListener('input', () => {
     store.set((state) => applyCustomInput(state, custom.value));
@@ -77,37 +76,39 @@ export function mountPeriodPicker(container, { store }) {
 
   /** @param {import('../state.js').AppState} state */
   function render(state) {
-    const { unit } = state.period;
+    const activeUnit = state.period.unit;
     for (const tab of tabs) {
-      const selected = tab.id === `period-tab-${unit}`;
+      const selected = tab.id === `period-tab-${activeUnit}`;
       tab.setAttribute('aria-selected', String(selected));
       tab.tabIndex = selected ? 0 : -1;
     }
-    panel.setAttribute('aria-labelledby', `period-tab-${unit}`);
+    panel.setAttribute('aria-labelledby', `period-tab-${activeUnit}`);
 
-    chips.replaceChildren(
-      ...PRESETS[unit].map((value) =>
+    presets.replaceChildren(
+      ...PRESETS[activeUnit].map((value) =>
         h(
           'button',
           {
             type: 'button',
-            class: 'chip',
+            class: 'preset',
             'aria-pressed': String(!state.periodError && state.period.value === value),
+            'aria-label': `${value} ${t(activeUnit === 'hours' ? 'unitHoursShort' : 'unitDaysShort')}`,
             onclick: () => store.set((s) => applyPreset(s, value)),
           },
-          t(unit === 'hours' ? 'presetHours' : 'presetDays', { n: value }),
+          String(value),
         ),
       ),
+      customBox,
     );
 
-    custom.max = String(LIMITS[unit].max);
-    if (document.activeElement !== custom && custom.value !== state.customInput[unit]) {
-      custom.value = state.customInput[unit];
+    custom.max = String(LIMITS[activeUnit].max);
+    if (document.activeElement !== custom && custom.value !== state.customInput[activeUnit]) {
+      custom.value = state.customInput[activeUnit];
     }
-    suffix.textContent = t(unit === 'hours' ? 'unitHours' : 'unitDays');
+    unit.textContent = t(activeUnit === 'hours' ? 'unitHoursShort' : 'unitDaysShort');
 
     if (state.periodError) {
-      error.textContent = ERROR_TEXT[state.periodError](unit);
+      error.textContent = ERROR_TEXT[state.periodError](activeUnit);
       error.hidden = false;
       custom.setAttribute('aria-invalid', 'true');
     } else {

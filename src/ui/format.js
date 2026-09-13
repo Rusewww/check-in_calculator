@@ -27,6 +27,24 @@ export function formatDateTime(epochMs, zone, locale) {
 }
 
 /**
+ * "Sun 4 Oct" or, with `year`, "Sun 4 Oct 2026".
+ * @param {number} epochMs
+ * @param {string} zone
+ * @param {string} [locale]
+ * @param {{ year?: boolean }} [options]
+ * @returns {string}
+ */
+export function formatDateOnly(epochMs, zone, locale, options = {}) {
+  return new Intl.DateTimeFormat(locale, {
+    timeZone: zone,
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    ...(options.year ? { year: 'numeric' } : {}),
+  }).format(epochMs);
+}
+
+/**
  * "14:30" (or "2:30 PM" in 12-hour locales).
  * @param {number} epochMs
  * @param {string} zone
@@ -38,6 +56,21 @@ export function formatTimeOnly(epochMs, zone, locale) {
     timeZone: zone,
     hour: 'numeric',
     minute: '2-digit',
+  }).format(epochMs);
+}
+
+/**
+ * Always "14:30": a 24-hour, zero-padded clock, as on departure boards, in any locale.
+ * @param {number} epochMs
+ * @param {string} zone
+ * @returns {string}
+ */
+export function formatClock(epochMs, zone) {
+  return new Intl.DateTimeFormat('en-GB', {
+    timeZone: zone,
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
   }).format(epochMs);
 }
 
@@ -61,6 +94,16 @@ export function formatIsoInZone(zoned) {
  */
 export function zoneDisplayName(zone) {
   return zone.replace(/_/g, ' ');
+}
+
+/**
+ * The place part of a zone identifier: "Europe/Kyiv" → "Kyiv", "America/New_York" → "New York".
+ * @param {string} zone
+ * @returns {string}
+ */
+export function zoneCity(zone) {
+  const segment = zone.split('/').pop() ?? zone;
+  return segment.replace(/_/g, ' ');
 }
 
 /**
@@ -133,4 +176,15 @@ export function formatPeriodText(period, form = 'nominative') {
         ? 'daysAccusative'
         : 'daysCount';
   return t(key, { n: period.value });
+}
+
+/**
+ * "24 h", "3 d": the compact form used on the boarding-pass stub.
+ * @param {import('../core/period.js').Period} period
+ * @returns {string}
+ */
+export function formatShortPeriod(period) {
+  return period.unit === 'hours'
+    ? t('shortHours', { n: period.value })
+    : t('shortDays', { n: period.value });
 }

@@ -1,7 +1,8 @@
 // @ts-check
 /**
- * The answer: when check-in opens (airport time and the user's time), live status,
- * daylight-saving notices, and "add to calendar" actions.
+ * The answer as a boarding pass: status band, hero opening time (airport time and the
+ * user's time), perforated tear line, stub with departure / window / countdown,
+ * daylight-saving notices, and the calendar actions below.
  * @module ui/components/ResultPanel
  */
 import { h } from '../dom.js';
@@ -18,13 +19,17 @@ import { describeAirport } from '../../core/airports.js';
 import { effectiveUserZone } from '../state.js';
 import {
   formatAgo,
+  formatClock,
   formatCountdown,
+  formatDateOnly,
   formatDateTime,
   formatIsoInZone,
   formatMinutesDiff,
   formatPeriodText,
+  formatShortPeriod,
   formatTimeOnly,
   formatZoneLabel,
+  zoneCity,
 } from '../format.js';
 
 /**
@@ -38,17 +43,17 @@ import {
  */
 export function mountResultPanel(container, { store, deviceZone, locale, getShareUrl }) {
   const placeholder = h('p', { class: 'placeholder' }, t('resultPlaceholder'));
-  const panel = h('section', {
-    class: 'card result',
-    'aria-labelledby': 'result-title',
-    hidden: true,
-  });
-  container.append(placeholder, panel);
+  const pass = h('section', { class: 'pass', 'aria-labelledby': 'pass-title', hidden: true });
+  const actions = h('div', { class: 'actions', hidden: true });
+  const footnote = h('p', { class: 'footnote', hidden: true }, t('footnote'));
+  container.append(placeholder, pass, actions, footnote);
 
   /** @type {import('../../core/checkin.js').CheckInResult | null} */
   let current = null;
   /** @type {HTMLElement | null} */
   let statusEl = null;
+  /** @type {HTMLElement | null} */
+  let departsEl = null;
   /** @type {ReturnType<typeof setInterval> | null} */
   let timer = null;
 
@@ -60,20 +65,24 @@ export function mountResultPanel(container, { store, deviceZone, locale, getShar
   }
 
   function renderStatus() {
-    if (!current || !statusEl) return;
+    if (!current || !statusEl || !departsEl) return;
     const s = statusAt(Date.now(), current.opens.epochMs, current.departure.epochMs);
-    statusEl.className = `status status-${s.status}`;
     if (s.status === 'before-open') {
-      statusEl.replaceChildren(
-        `${t('statusBefore')} `,
-        h('span', { class: 'countdown' }, formatCountdown(s.msUntilOpen)),
-      );
+      statusEl.className = 'pill pill-countdown';
+      statusEl.textContent = t('statusOpensIn', { countdown: formatCountdown(s.msUntilOpen) });
     } else if (s.status === 'open') {
-      statusEl.textContent = `${t('statusOpen')} · ${t('statusOpenedAgo', { ago: formatAgo(-s.msUntilOpen) })}`;
+      statusEl.className = 'pill pill-open';
+      statusEl.replaceChildren(
+        h('span', { class: 'pill-dot', 'aria-hidden': 'true' }),
+        t('statusOpenNow', { ago: formatAgo(-s.msUntilOpen) }),
+      );
     } else {
+      statusEl.className = 'pill pill-departed';
       statusEl.textContent = t('statusDeparted');
-      stopTimer();
     }
+    departsEl.textContent =
+      s.status === 'departed' ? t('stubDeparted') : formatCountdown(s.msUntilDeparture);
+    if (s.status === 'departed') stopTimer();
   }
 
   /**
@@ -142,15 +151,32 @@ export function mountResultPanel(container, { store, deviceZone, locale, getShar
     setTimeout(() => URL.revokeObjectURL(url), 10_000);
   }
 
+  /**
+   * @param {string} label
+   * @param {string | HTMLElement} value
+   */
+  function stubCell(label, value) {
+    return h(
+      'div',
+      {},
+      h('div', { class: 'stub-label' }, label),
+      h('div', { class: 'stub-value' }, value),
+    );
+  }
+
   /** @param {import('../state.js').AppState} state */
   function render(state) {
     const departure = state.departure ? parseDepartureString(state.departure) : null;
     if (!state.airport || !departure || state.periodError) {
       current = null;
       statusEl = null;
+      departsEl = null;
       stopTimer();
-      panel.replaceChildren();
-      panel.hidden = true;
+      pass.replaceChildren();
+      actions.replaceChildren();
+      pass.hidden = true;
+      actions.hidden = true;
+      footnote.hidden = true;
       placeholder.hidden = false;
       return;
     }
@@ -165,65 +191,89 @@ export function mountResultPanel(container, { store, deviceZone, locale, getShar
       nowMs: Date.now(),
     });
     current = result;
-
     const sameZone = userZone === airport.tz;
-    const airportBlock = h(
+
+    statusEl = h('span', { class: 'pill', 'aria-live': 'polite' });
+    const band = h(
       'div',
-      { class: 'time-block' },
+      { class: 'pass-band' },
+      h('h2', { id: 'pass-title', class: 'pass-band-title' }, t('bandTitle')),
+      statusEl,
+    );
+
+    const heroMain = h(
+      'div',
+      {},
       h(
-        'span',
-        { class: 'time-label' },
-        sameZone
-          ? t('localTime', {
-              iata: airport.iata,
-              zone: formatZoneLabel(airport.tz, result.opens.airport.offsetMinutes),
-            })
-          : t('airportTime', {
-              zone: formatZoneLabel(airport.tz, result.opens.airport.offsetMinutes),
-            }),
+        'div',
+        { class: 'hero-label' },
+        t('heroAirportLabel', {
+          date: formatDateOnly(result.opens.epochMs, airport.tz, locale, { year: true }),
+        }),
       ),
       h(
         'time',
-        { class: 'time-value', datetime: formatIsoInZone(result.opens.airport) },
-        formatDateTime(result.opens.epochMs, airport.tz, locale),
+        { class: 'hero-time', datetime: formatIsoInZone(result.opens.airport) },
+        formatClock(result.opens.epochMs, airport.tz),
       ),
     );
-    const userBlock = sameZone
-      ? null
-      : h(
-          'div',
-          { class: 'time-block' },
-          h(
-            'span',
-            { class: 'time-label' },
-            t('yourTime', { zone: formatZoneLabel(userZone, result.opens.user.offsetMinutes) }),
-          ),
-          h(
-            'time',
-            { class: 'time-value', datetime: formatIsoInZone(result.opens.user) },
-            formatDateTime(result.opens.epochMs, userZone, locale),
-          ),
-        );
 
-    statusEl = h('p', { class: 'status' });
+    let heroSide = null;
+    if (!sameZone) {
+      const diff = result.zoneDifference.atOpenMinutes;
+      const diffText =
+        diff > 0
+          ? t('diffAhead', { diff: formatMinutesDiff(diff) })
+          : diff < 0
+            ? t('diffBehind', { diff: formatMinutesDiff(diff) })
+            : t('diffSame');
+      const sameDay =
+        result.opens.user.day === result.opens.airport.day &&
+        result.opens.user.month === result.opens.airport.month;
+      const note = sameDay
+        ? diffText
+        : `${formatDateOnly(result.opens.epochMs, userZone, locale)} · ${diffText}`;
+      heroSide = h(
+        'div',
+        { class: 'hero-side' },
+        h('div', { class: 'hero-label' }, t('heroYourLabel', { city: zoneCity(userZone) })),
+        h(
+          'time',
+          { class: 'hero-side-time', datetime: formatIsoInZone(result.opens.user) },
+          formatClock(result.opens.epochMs, userZone),
+        ),
+        h('div', { class: 'hero-side-note' }, note),
+      );
+    }
+
+    const tear = h(
+      'div',
+      { class: 'tear', 'aria-hidden': 'true' },
+      h('div', { class: 'tear-line' }),
+      h('div', { class: 'tear-notch tear-notch-l' }),
+      h('div', { class: 'tear-notch tear-notch-r' }),
+    );
+
+    departsEl = h('span', {});
+    const stub = h(
+      'div',
+      { class: 'stub' },
+      stubCell(
+        t('stubDeparture'),
+        `${formatDateOnly(result.departure.epochMs, airport.tz, locale)} · ${formatClock(result.departure.epochMs, airport.tz)}`,
+      ),
+      stubCell(t('stubWindow'), t('windowBefore', { period: formatShortPeriod(state.period) })),
+      stubCell(t('stubDepartsIn'), departsEl),
+    );
 
     /** @type {HTMLElement[]} */
     const notes = [];
-    if (!sameZone) {
-      const diff = result.zoneDifference.atOpenMinutes;
-      const key = diff > 0 ? 'diffAhead' : diff < 0 ? 'diffBehind' : 'diffSame';
-      notes.push(h('p', { class: 'meta-line' }, t(key, { diff: formatMinutesDiff(diff) })));
-      if (result.zoneDifference.changes) {
-        const at = result.zoneDifference.atDepartureMinutes;
-        const sign = at > 0 ? '+' : at < 0 ? '−' : '';
-        notes.push(
-          h(
-            'p',
-            { class: 'notice' },
-            t('diffChanges', { diff: `${sign}${formatMinutesDiff(at)}` }),
-          ),
-        );
-      }
+    if (!sameZone && result.zoneDifference.changes) {
+      const at = result.zoneDifference.atDepartureMinutes;
+      const sign = at > 0 ? '+' : at < 0 ? '−' : '';
+      notes.push(
+        h('p', { class: 'notice' }, t('diffChanges', { diff: `${sign}${formatMinutesDiff(at)}` })),
+      );
     }
     if (result.departure.resolution === 'gap') {
       notes.push(
@@ -244,44 +294,15 @@ export function mountResultPanel(container, { store, deviceZone, locale, getShar
       notes.push(h('p', { class: 'notice' }, t('noticeOpensOverlap')));
     }
 
-    const departureLine = h(
-      'p',
-      { class: 'meta-line' },
-      t('departureLine', {
-        when: formatDateTime(result.departure.epochMs, airport.tz, locale),
-        zone: formatZoneLabel(airport.tz, result.departure.airport.offsetMinutes),
-      }),
-      sameZone
-        ? ''
-        : ` · ${t('departureLineUser', { when: formatDateTime(result.departure.epochMs, userZone, locale) })}`,
-    );
-    const windowLine = h(
-      'p',
-      { class: 'meta-line' },
-      t('windowLine', { period: formatPeriodText(state.period, 'accusative') }),
+    pass.replaceChildren(
+      band,
+      h('div', { class: 'pass-hero' }, heroMain, heroSide),
+      tear,
+      stub,
+      ...notes,
     );
 
     const event = buildEvent(state, result, userZone);
-    const googleLink = h(
-      'a',
-      {
-        class: 'btn btn-primary',
-        href: googleCalendarUrl(event, { displayZone: userZone }),
-        target: '_blank',
-        rel: 'noopener noreferrer',
-      },
-      t('addToGoogle'),
-    );
-    const icsButton = h(
-      'button',
-      {
-        type: 'button',
-        class: 'btn',
-        title: t('downloadIcsTitle'),
-        onclick: () => downloadIcs(event, airport.iata),
-      },
-      t('downloadIcs'),
-    );
     const copyButton = h('button', { type: 'button', class: 'btn' }, t('copyLink'));
     copyButton.addEventListener('click', async () => {
       try {
@@ -294,17 +315,33 @@ export function mountResultPanel(container, { store, deviceZone, locale, getShar
         copyButton.textContent = t('copyLink');
       }, 2500);
     });
-
-    panel.replaceChildren(
-      h('h2', { id: 'result-title', class: 'result-title' }, t('resultTitle')),
-      h('div', { class: 'times' }, airportBlock, userBlock),
-      statusEl,
-      ...notes,
-      departureLine,
-      windowLine,
-      h('div', { class: 'actions' }, googleLink, icsButton, copyButton),
+    actions.replaceChildren(
+      h(
+        'a',
+        {
+          class: 'btn btn-primary',
+          href: googleCalendarUrl(event, { displayZone: userZone }),
+          target: '_blank',
+          rel: 'noopener noreferrer',
+        },
+        t('addToGoogle'),
+      ),
+      h(
+        'button',
+        {
+          type: 'button',
+          class: 'btn',
+          title: t('downloadIcsTitle'),
+          onclick: () => downloadIcs(event, airport.iata),
+        },
+        t('downloadIcs'),
+      ),
+      copyButton,
     );
-    panel.hidden = false;
+
+    pass.hidden = false;
+    actions.hidden = false;
+    footnote.hidden = false;
     placeholder.hidden = true;
 
     renderStatus();

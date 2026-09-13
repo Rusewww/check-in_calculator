@@ -144,10 +144,10 @@ function rankOf(airport) {
 
 /**
  * Builds a search index. Ranking tiers: exact IATA code; IATA prefix (1–2 letters) or
- * exact ICAO code; a word of the name or city starting with the query; a word of the
- * region or country starting with the query; a substring of the name or city; a
- * substring of the region or country. Within a tier, airports with scheduled service
- * and larger airports come first.
+ * exact ICAO code; the name or city beginning with the query; a later word of the name
+ * or city starting with the query; a word of the region or country starting with the
+ * query; a substring of the name or city; a substring of the region or country. Within
+ * a tier, airports with scheduled service and larger airports come first.
  * @param {Airport[]} airports
  * @returns {AirportIndex}
  */
@@ -162,6 +162,8 @@ export function createAirportIndex(airports) {
       airport,
       primary,
       secondary,
+      nameStart: wordsOnly(normalizeText(airport.name)),
+      cityStart: wordsOnly(normalizeText(airport.city)),
       primaryWords: ` ${wordsOnly(primary)} `,
       secondaryWords: ` ${wordsOnly(secondary)} `,
       rank: rankOf(airport),
@@ -196,10 +198,15 @@ export function createAirportIndex(airports) {
         if (isIata && airport.iata === code) tier = 0;
         else if (isIataPrefix && airport.iata.startsWith(code)) tier = 1;
         else if (isIcao && airport.icao === code) tier = 1;
-        else if (wordQuery && entry.primaryWords.includes(wordQuery)) tier = 2;
-        else if (wordQuery && entry.secondaryWords.includes(wordQuery)) tier = 3;
-        else if (substring && entry.primary.includes(substring)) tier = 4;
-        else if (substring && entry.secondary.includes(substring)) tier = 5;
+        else if (
+          wordQuery &&
+          (entry.nameStart.startsWith(words) || entry.cityStart.startsWith(words))
+        )
+          tier = 2;
+        else if (wordQuery && entry.primaryWords.includes(wordQuery)) tier = 3;
+        else if (wordQuery && entry.secondaryWords.includes(wordQuery)) tier = 4;
+        else if (substring && entry.primary.includes(substring)) tier = 5;
+        else if (substring && entry.secondary.includes(substring)) tier = 6;
         else continue;
         matches.push({ entry, tier });
       }

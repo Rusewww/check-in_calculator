@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * Scheduled departure: a `datetime-local` input interpreted in the airport's zone.
+ * Scheduled departure: a Date box and a Time box, interpreted in the airport's zone.
  * @module ui/components/DepartureField
  */
 import { h } from '../dom.js';
@@ -13,33 +13,49 @@ import { formatDepartureString, parseDepartureString } from '../../core/urlState
  * @returns {() => void} dispose
  */
 export function mountDepartureField(container, { store }) {
-  const input = /** @type {HTMLInputElement} */ (
-    h('input', {
-      id: 'departure-input',
-      class: 'input',
-      type: 'datetime-local',
-      step: '60',
-      required: true,
-    })
+  const date = /** @type {HTMLInputElement} */ (
+    h('input', { id: 'departure-date', type: 'date', required: true })
+  );
+  const time = /** @type {HTMLInputElement} */ (
+    h('input', { id: 'departure-time', type: 'time', step: '60', required: true })
   );
   const error = h('p', { class: 'field-error', role: 'alert', hidden: true });
 
   container.append(
-    h('label', { class: 'label', for: 'departure-input' }, t('departureLabel')),
-    input,
-    h('p', { class: 'field-hint' }, t('departureHint')),
+    h(
+      'p',
+      { class: 'eyebrow' },
+      t('departureLabel'),
+      ' ',
+      h('span', { class: 'eyebrow-note' }, t('departureNote')),
+    ),
+    h(
+      'div',
+      { class: 'dt-grid' },
+      h(
+        'label',
+        { class: 'dt-box', for: 'departure-date' },
+        h('span', { class: 'dt-label' }, t('dateLabel')),
+        date,
+      ),
+      h(
+        'label',
+        { class: 'dt-box', for: 'departure-time' },
+        h('span', { class: 'dt-label' }, t('timeLabel')),
+        time,
+      ),
+    ),
     error,
   );
 
   function onChange() {
-    const raw = input.value;
-    if (!raw) {
+    if (!date.value || !time.value) {
       store.set({ departure: '' });
       error.hidden = true;
       return;
     }
-    // Some browsers include seconds; the shared format is minute precision.
-    const wall = parseDepartureString(raw.slice(0, 16));
+    // Some browsers include seconds in the time value; the shared format is minute precision.
+    const wall = parseDepartureString(`${date.value}T${time.value.slice(0, 5)}`);
     if (wall) {
       store.set({ departure: formatDepartureString(wall) });
       error.hidden = true;
@@ -50,14 +66,22 @@ export function mountDepartureField(container, { store }) {
     }
   }
 
-  input.addEventListener('input', onChange);
-  input.addEventListener('change', onChange);
+  for (const input of [date, time]) {
+    input.addEventListener('input', onChange);
+    input.addEventListener('change', onChange);
+  }
 
-  const unsubscribe = store.subscribe((state) => {
-    if (document.activeElement !== input && input.value !== state.departure) {
-      input.value = state.departure;
-    }
-  });
-  input.value = store.get().departure;
+  /** @param {string} departure */
+  function fill(departure) {
+    const active = document.activeElement;
+    if (active === date || active === time) return;
+    const nextDate = departure.slice(0, 10);
+    const nextTime = departure.slice(11, 16);
+    if (date.value !== nextDate) date.value = nextDate;
+    if (time.value !== nextTime) time.value = nextTime;
+  }
+
+  const unsubscribe = store.subscribe((state) => fill(state.departure));
+  fill(store.get().departure);
   return unsubscribe;
 }

@@ -20,8 +20,10 @@ buttons to **add the opening time to Google Calendar** or **download an .ics fil
 Apple Calendar, Outlook and others. The link in the address bar always reflects the
 current inputs, so it can be shared.
 
-A settings button (top right) switches the theme between system default, light and dark,
-and the interface language between English (default), Ukrainian and German.
+The top bar has an Auto / Light / Dark theme switch and a language button (English by
+default, Ukrainian and German). The visual design follows the approved Claude Design
+mockups: Geist type, warm neutrals, a violet accent, and the result presented as a
+boarding pass with a large opening time.
 
 Daylight-saving changes are handled: "N hours before" is exact elapsed time, "N days
 before" is the same local time N calendar days earlier at the airport, and a departure

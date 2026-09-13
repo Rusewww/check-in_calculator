@@ -268,6 +268,31 @@ The opening moment can be saved as a 30-minute event (`src/core/calendar.js`):
   checker enforces that every language defines every key; a test checks placeholders
   and plural coverage.
 - Components render their text when they mount and return a dispose function, so a
-  language change re-mounts the UI on the same store (inputs, results and the open
-  settings dialog are preserved). Dates use the language's locale (`uk-UA`, `de-DE`);
-  English keeps the browser's own English variant and otherwise uses `en-GB`.
+  language change re-mounts the UI on the same store (inputs and results are
+  preserved). Dates use the language's locale (`uk-UA`, `de-DE`); English keeps the
+  browser's own English variant and otherwise uses `en-GB`. Clock times on the
+  boarding pass are always 24-hour (`formatClock`), as on departure boards.
+- The controls live in the top bar (`src/ui/components/HeaderControls.js`): an
+  Auto / Light / Dark segmented switch and a language button showing the current code
+  that opens a menu.
+
+## 10. Visual design
+
+The UI implements the Claude Design project "Check-In Calculator UI mockups"
+(`Mockups.dc.html`, screens 1a–1d; screen 1e is the future extension popup):
+
+- Type: Geist (UI) and Geist Mono (codes, times, labels) from Google Fonts, with system
+  fallbacks.
+- Palette: warm neutrals (`#f7f5f2` / `#15130f` backgrounds, `#e2dcd3` / `#322d27`
+  borders) with a violet accent (`#6a35e0` light, `#a87dff` dark); the dark result band
+  is solid `#4a2b8f`. All tokens are `light-dark()` pairs in `src/ui/styles.css`.
+- Layout: a 436px inputs panel (airport "ticket" with inline search results, Date and
+  Time boxes, preset row with an inline custom box, zone select) beside the result
+  column; one column under 900px.
+- Result: a boarding pass with a status band (countdown / open / departed), a hero
+  opening time in airport time with the user's time beside it, a perforated tear line,
+  and a stub. The mockup's third stub cell reads "Closes · at the gate"; since the app
+  has no closing-time data, that cell shows the countdown to departure instead.
+- Mockup-only extras that are not implemented: the mobile status bar and phone frame.
+  The "Use my device time zone" link was dropped because the mockup has no such
+  control; the device zone is still available in the select.

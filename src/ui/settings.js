@@ -74,7 +74,7 @@ export function applyTheme(theme, root = document.documentElement) {
  * (so US users keep US formats) and otherwise uses British conventions; the other
  * languages have a fixed locale.
  * @param {import('./strings.js').LanguageCode} language
- * @param {string | undefined} [navigatorLanguage]
+ * @param {string | null | undefined} [navigatorLanguage]  pass null for "no browser language"
  * @returns {string}
  */
 export function resolveLocale(language, navigatorLanguage = globalThis.navigator?.language) {

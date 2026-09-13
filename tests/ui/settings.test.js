@@ -74,7 +74,8 @@ describe('resolveLocale', () => {
     expect(resolveLocale('en', 'en-US')).toBe('en-US');
     expect(resolveLocale('en', 'en')).toBe('en');
     expect(resolveLocale('en', 'uk-UA')).toBe('en-GB');
-    expect(resolveLocale('en', undefined)).toBe('en-GB');
+    expect(resolveLocale('en', null)).toBe('en-GB');
+    expect(resolveLocale('en', '')).toBe('en-GB');
   });
   it('uses fixed locales for the other languages', () => {
     expect(resolveLocale('uk', 'en-US')).toBe('uk-UA');

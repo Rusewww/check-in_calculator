@@ -68,10 +68,11 @@ const en = {
   statusOpenNow: 'Open now · opened {ago} ago',
   statusDeparted: 'Departed',
   heroAirportLabel: '{date} · Airport time',
-  heroYourLabel: 'Your time · {city}',
-  diffAhead: '{diff} ahead of the airport',
-  diffBehind: '{diff} behind the airport',
-  diffSame: 'Same offset as the airport',
+  heroYourLabel: '{date} · Your time · {city}',
+  sideAirportLabel: 'Airport time · {iata}',
+  airportAhead: '{diff} ahead of you',
+  airportBehind: '{diff} behind you',
+  diffSame: 'Same offset as you',
   diffChanges:
     'At departure the difference will be {diff}, because a daylight-saving change falls in between.',
   noticeDepartureGap:
@@ -82,7 +83,7 @@ const en = {
     'The opening time falls in a daylight-saving gap at the airport and was moved forward.',
   noticeOpensOverlap:
     'The opening time occurs twice at the airport (clocks go back that night). The first occurrence is used.',
-  stubDeparture: 'Departure',
+  stubDeparture: 'Departure · {iata}',
   stubWindow: 'Check-in window',
   windowBefore: '{period} before',
   stubDepartsIn: 'Departs in',
@@ -172,10 +173,11 @@ const uk = {
   statusOpenNow: 'Відкрито · відкрилася {ago} тому',
   statusDeparted: 'Рейс вилетів',
   heroAirportLabel: '{date} · час аеропорту',
-  heroYourLabel: 'Ваш час · {city}',
-  diffAhead: 'на {diff} попереду аеропорту',
-  diffBehind: 'на {diff} позаду аеропорту',
-  diffSame: 'той самий зсув, що й в аеропорту',
+  heroYourLabel: '{date} · ваш час · {city}',
+  sideAirportLabel: 'Час аеропорту · {iata}',
+  airportAhead: 'на {diff} попереду вас',
+  airportBehind: 'на {diff} позаду вас',
+  diffSame: 'той самий зсув, що й у вас',
   diffChanges:
     'На момент вильоту різниця становитиме {diff}, бо між цими датами відбувається перехід на літній або зимовий час.',
   noticeDepartureGap:
@@ -186,7 +188,7 @@ const uk = {
     'Час відкриття припадає на пропущену під час переходу на літній час годину в аеропорту, тому його зсунуто вперед.',
   noticeOpensOverlap:
     'Час відкриття трапляється в аеропорту двічі (тієї ночі годинники переводять назад). Використано перший варіант.',
-  stubDeparture: 'Виліт',
+  stubDeparture: 'Виліт · {iata}',
   stubWindow: 'Період реєстрації',
   windowBefore: 'за {period}',
   stubDepartsIn: 'Виліт через',
@@ -276,10 +278,11 @@ const de = {
   statusOpenNow: 'Jetzt offen · seit {ago}',
   statusDeparted: 'Abgeflogen',
   heroAirportLabel: '{date} · Flughafenzeit',
-  heroYourLabel: 'Ihre Zeit · {city}',
-  diffAhead: '{diff} vor dem Flughafen',
-  diffBehind: '{diff} hinter dem Flughafen',
-  diffSame: 'Gleicher Versatz wie am Flughafen',
+  heroYourLabel: '{date} · Ihre Zeit · {city}',
+  sideAirportLabel: 'Flughafenzeit · {iata}',
+  airportAhead: '{diff} vor Ihnen',
+  airportBehind: '{diff} hinter Ihnen',
+  diffSame: 'Gleicher Versatz wie bei Ihnen',
   diffChanges:
     'Beim Abflug beträgt der Unterschied {diff}, weil dazwischen eine Zeitumstellung liegt.',
   noticeDepartureGap:
@@ -290,7 +293,7 @@ const de = {
     'Die Öffnungszeit fällt am Flughafen in die Lücke der Zeitumstellung und wurde nach vorn verschoben.',
   noticeOpensOverlap:
     'Die Öffnungszeit kommt am Flughafen zweimal vor (in dieser Nacht werden die Uhren zurückgestellt). Es wird das erste Vorkommen verwendet.',
-  stubDeparture: 'Abflug',
+  stubDeparture: 'Abflug · {iata}',
   stubWindow: 'Check-in-Fenster',
   windowBefore: '{period} vorher',
   stubDepartsIn: 'Abflug in',

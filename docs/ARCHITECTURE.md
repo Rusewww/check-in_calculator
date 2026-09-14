@@ -295,8 +295,9 @@ The UI implements the Claude Design project "Check-In Calculator UI mockups"
   Time boxes, preset row with an inline custom box, zone select) beside the result
   column; one column under 900px.
 - Result: a boarding pass with a status band (countdown / open / departed), a hero
-  opening time in airport time with the user's time beside it, a perforated tear line,
-  and a stub. The mockup's third stub cell reads "Closes · at the gate"; since the app
+  opening time in the user's own zone (the airport time sits beside it, described
+  relative to the user; when the zones match the airport time is the hero), a
+  perforated tear line, and a stub. The mockup's third stub cell reads "Closes · at the gate"; since the app
   has no closing-time data, that cell shows the countdown to departure instead.
 - Mockup-only extras that are not implemented: the mobile status bar and phone frame.
   The "Use my device time zone" link was dropped because the mockup has no such

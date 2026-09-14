@@ -28,7 +28,9 @@ describe('languages', () => {
 
 describe('t', () => {
   it('fills placeholders and leaves unknown ones visible', () => {
-    expect(t('heroYourLabel', { city: 'Kyiv' })).toBe('Your time · Kyiv');
+    expect(t('heroYourLabel', { date: 'Sun 4 Oct 2026', city: 'Kyiv' })).toBe(
+      'Sun 4 Oct 2026 · Your time · Kyiv',
+    );
     expect(t('periodErrorRange', { min: 1 })).toBe('Enter a number between 1 and {max}.');
   });
   it('throws on a missing key', () => {

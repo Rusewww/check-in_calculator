@@ -732,7 +732,7 @@ select {
 }
 
 .hero-label {
-  font: 500 11px var(--font-mono);
+  font: 500 13px var(--font-mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted-2);

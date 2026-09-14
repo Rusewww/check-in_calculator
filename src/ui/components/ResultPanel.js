@@ -201,46 +201,52 @@ export function mountResultPanel(container, { store, deviceZone, locale, getShar
       statusEl,
     );
 
+    // The opening time in the user's own zone is what matters most, so it takes the
+    // hero whenever the zones differ; the airport time then moves to the side.
+    const heroZone = sameZone ? airport.tz : userZone;
+    const heroZoned = sameZone ? result.opens.airport : result.opens.user;
+    const heroDate = formatDateOnly(result.opens.epochMs, heroZone, locale, { year: true });
     const heroMain = h(
       'div',
       {},
       h(
         'div',
         { class: 'hero-label' },
-        t('heroAirportLabel', {
-          date: formatDateOnly(result.opens.epochMs, airport.tz, locale, { year: true }),
-        }),
+        sameZone
+          ? t('heroAirportLabel', { date: heroDate })
+          : t('heroYourLabel', { date: heroDate, city: zoneCity(userZone) }),
       ),
       h(
         'time',
-        { class: 'hero-time', datetime: formatIsoInZone(result.opens.airport) },
-        formatClock(result.opens.epochMs, airport.tz),
+        { class: 'hero-time', datetime: formatIsoInZone(heroZoned) },
+        formatClock(result.opens.epochMs, heroZone),
       ),
     );
 
     let heroSide = null;
     if (!sameZone) {
+      // zoneDifference is user minus airport: positive means the airport is behind the user.
       const diff = result.zoneDifference.atOpenMinutes;
       const diffText =
         diff > 0
-          ? t('diffAhead', { diff: formatMinutesDiff(diff) })
+          ? t('airportBehind', { diff: formatMinutesDiff(diff) })
           : diff < 0
-            ? t('diffBehind', { diff: formatMinutesDiff(diff) })
+            ? t('airportAhead', { diff: formatMinutesDiff(diff) })
             : t('diffSame');
       const sameDay =
         result.opens.user.day === result.opens.airport.day &&
         result.opens.user.month === result.opens.airport.month;
       const note = sameDay
         ? diffText
-        : `${formatDateOnly(result.opens.epochMs, userZone, locale)} · ${diffText}`;
+        : `${formatDateOnly(result.opens.epochMs, airport.tz, locale)}·${diffText}`;
       heroSide = h(
         'div',
         { class: 'hero-side' },
-        h('div', { class: 'hero-label' }, t('heroYourLabel', { city: zoneCity(userZone) })),
+        h('div', { class: 'hero-label' }, t('sideAirportLabel', { iata: airport.iata })),
         h(
           'time',
-          { class: 'hero-side-time', datetime: formatIsoInZone(result.opens.user) },
-          formatClock(result.opens.epochMs, userZone),
+          { class: 'hero-side-time', datetime: formatIsoInZone(result.opens.airport) },
+          formatClock(result.opens.epochMs, airport.tz),
         ),
         h('div', { class: 'hero-side-note' }, note),
       );
@@ -259,8 +265,8 @@ export function mountResultPanel(container, { store, deviceZone, locale, getShar
       'div',
       { class: 'stub' },
       stubCell(
-        t('stubDeparture'),
-        `${formatDateOnly(result.departure.epochMs, airport.tz, locale)} · ${formatClock(result.departure.epochMs, airport.tz)}`,
+        t('stubDeparture', { iata: airport.iata }),
+        `${formatDateOnly(result.departure.epochMs, airport.tz, locale)}·${formatClock(result.departure.epochMs, airport.tz)}`,
       ),
       stubCell(t('stubWindow'), t('windowBefore', { period: formatShortPeriod(state.period) })),
       stubCell(t('stubDepartsIn'), departsEl),

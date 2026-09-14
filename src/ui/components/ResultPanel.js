@@ -211,7 +211,7 @@ export function mountResultPanel(container, { store, deviceZone, locale, getShar
       {},
       h(
         'div',
-        { class: 'hero-label' },
+        { class: 'hero-label hero-date' },
         sameZone
           ? t('heroAirportLabel', { date: heroDate })
           : t('heroYourLabel', { date: heroDate, city: zoneCity(userZone) }),
@@ -238,7 +238,7 @@ export function mountResultPanel(container, { store, deviceZone, locale, getShar
         result.opens.user.month === result.opens.airport.month;
       const note = sameDay
         ? diffText
-        : `${formatDateOnly(result.opens.epochMs, airport.tz, locale)}·${diffText}`;
+        : `${formatDateOnly(result.opens.epochMs, airport.tz, locale)} · ${diffText}`;
       heroSide = h(
         'div',
         { class: 'hero-side' },
@@ -266,7 +266,17 @@ export function mountResultPanel(container, { store, deviceZone, locale, getShar
       { class: 'stub' },
       stubCell(
         t('stubDeparture', { iata: airport.iata }),
-        `${formatDateOnly(result.departure.epochMs, airport.tz, locale)}·${formatClock(result.departure.epochMs, airport.tz)}`,
+        h(
+          'span',
+          {},
+          h(
+            'span',
+            { class: 'stub-part' },
+            formatDateOnly(result.departure.epochMs, airport.tz, locale),
+          ),
+          ' · ',
+          h('span', { class: 'stub-part' }, formatClock(result.departure.epochMs, airport.tz)),
+        ),
       ),
       stubCell(t('stubWindow'), t('windowBefore', { period: formatShortPeriod(state.period) })),
       stubCell(t('stubDepartsIn'), departsEl),

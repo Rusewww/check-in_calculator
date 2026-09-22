@@ -302,3 +302,24 @@ The UI implements the Claude Design project "Check-In Calculator UI mockups"
 - Mockup-only extras that are not implemented: the mobile status bar and phone frame.
   The "Use my device time zone" link was dropped because the mockup has no such
   control; the device zone is still available in the select.
+
+## 11. Privacy policy page
+
+- `privacy.html` is a second Vite entry (`build.rolldownOptions.input` in
+  `vite.config.js`), published at `/privacy.html` next to the calculator. Its content is
+  static HTML, readable without JavaScript. `src/web/privacy.js` only applies the shared
+  stylesheet, the visitor's saved theme and the brand mark. The page is English only.
+- It covers both the website and the Chrome extension, whose store listing links to it.
+  The extension facts were checked against its manifest (only the `storage` permission)
+  and source: the `chrome.storage.local` keys, no network requests of its own, and
+  bundled fonts and airport data.
+- Third parties it discloses: GitHub Pages hosting, Google Fonts (website only), the
+  Google Calendar hand-off (on click only), and Google Search Console (aggregate search
+  statistics only).
+- Both pages set `referrer: strict-origin-when-cross-origin`, so the Google Fonts
+  request carries only the site's origin, never the flight details in the query string.
+  The policy relies on that.
+- `tests/web/privacy.test.js` keeps the policy in step with the code. It requires the
+  website's storage keys, every external host in `index.html` and the calendar host to
+  appear in the policy, and a machine-readable "Last updated" date. It also fails if an
+  e-mail address appears; contact goes through the GitHub issue tracker instead.

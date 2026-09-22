@@ -28,6 +28,7 @@ import { LOGO_SVG } from './logo.js';
  * @param {string} options.dataUrl   URL of airports.json
  * @param {string} [options.metaUrl] URL of airports.meta.json
  * @param {string} [options.repoUrl]
+ * @param {string} [options.privacyUrl] URL of the privacy policy page
  * @returns {import('./store.js').Store<import('./state.js').AppState>}
  */
 export function mountApp(root, options) {
@@ -104,8 +105,18 @@ export function mountApp(root, options) {
           { class: 'app-footer' },
           h('p', {}, t('footerData')),
           dataUpdated,
-          options.repoUrl
-            ? h('p', {}, h('a', { href: options.repoUrl, rel: 'noopener' }, t('footerSource')))
+          options.repoUrl || options.privacyUrl
+            ? h(
+                'p',
+                {},
+                options.privacyUrl
+                  ? h('a', { href: options.privacyUrl }, t('footerPrivacy'))
+                  : null,
+                options.repoUrl && options.privacyUrl ? ' · ' : null,
+                options.repoUrl
+                  ? h('a', { href: options.repoUrl, rel: 'noopener' }, t('footerSource'))
+                  : null,
+              )
             : null,
         ),
       ),

@@ -85,10 +85,23 @@ that ever fails, set it once by hand under **Settings → Pages → Build and de
 Source: GitHub Actions**, or run
 `gh api -X POST repos/<owner>/<repo>/pages -f build_type=workflow`.
 
+## Privacy policy
+
+The privacy policy for both the website and the Chrome extension is published at
+https://rusewww.github.io/check-in_calculator/privacy.html (source: `privacy.html`), and
+the calculator's footer links to it. This is the URL to enter in the Chrome Web Store
+listing. `tests/web/privacy.test.js` fails if the site starts storing a new key or
+loading from a new third-party host that the policy does not mention. When you change
+the policy, also update its "Last updated" date.
+
+The site is registered in Google Search Console. The verification file
+`public/google1843244f48784b30.html` and the `google-site-verification` meta tag in
+`index.html` must stay in place, or Search Console will lose the ownership check.
+
 ## Roadmap
 
 - Chrome extension (Manifest V3) reusing the same core and UI, published in the Chrome
-  Web Store.
+  Web Store (source: https://github.com/Rusewww/check-in_calculator_chrome_extension).
 - More languages (all UI strings live in `src/ui/strings.js`, one table per language).
 
 ## Licences and attribution

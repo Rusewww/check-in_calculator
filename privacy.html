@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>Privacy policy · Check-in Calculator</title>
+    <meta
+      name="description"
+      content="How the Check-in Calculator website and Chrome extension handle your data: everything is calculated on your device, nothing is collected, sold or shared."
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <a class="brand brand-link" href="./">
+          <span class="brand-mark" aria-hidden="true"></span>
+          Check-in Calculator
+        </a>
+        <a class="btn" href="./">Back to the calculator</a>
+      </header>
+
+      <main class="legal">
+        <article class="legal-card">
+          <h1>Privacy policy</h1>
+          <p class="legal-meta">
+            Last updated: <time datetime="2026-09-22">22 September 2026</time>
+          </p>
+
+          <p>
+            This policy covers the Check-in Calculator website at
+            <a href="https://rusewww.github.io/check-in_calculator/"
+              >rusewww.github.io/check-in_calculator</a
+            >
+            and the Check-in Calculator extension for Google Chrome. Both are an independent,
+            open-source project. In this policy, “we” means the project’s developer.
+          </p>
+
+          <h2 id="summary">Summary</h2>
+          <ul>
+            <li>We do not collect, receive, sell or share any personal data.</li>
+            <li>
+              There are no accounts, no analytics, no advertising, no tracking and no cookies set by
+              this site.
+            </li>
+            <li>
+              Every calculation runs on your device, using your browser’s built-in time-zone
+              database.
+            </li>
+            <li>
+              Your preferences are kept only on your own device, and you can delete them at any
+              time.
+            </li>
+          </ul>
+
+          <h2 id="what-you-enter">What you enter, and where it is processed</h2>
+          <p>
+            To calculate when online check-in opens, you enter a departure airport, the scheduled
+            departure date and time, the check-in window (for example, 24 hours) and, optionally,
+            the time zone to show times in. These values are processed only in your browser. The
+            list of airports is a static file: the website downloads it from this same site, and the
+            extension carries it inside its package. Neither looks anything up on a server while you
+            type.
+          </p>
+
+          <h2 id="stored-on-your-device">What is stored on your device</h2>
+          <h3>Website</h3>
+          <p>The website saves two small entries in your browser’s local storage:</p>
+          <ul>
+            <li>
+              <code>checkin-calculator.settings</code>: your theme (Auto, Light or Dark) and
+              interface language.
+            </li>
+            <li>
+              <code>checkin-calculator.zone</code>: whether times follow the airport’s time zone,
+              and the time zone you chose.
+            </li>
+          </ul>
+          <p>
+            The website does not store your flight details. Instead, it puts them in the page
+            address (for example <code>?apt=LHR&amp;dep=2026-10-05T14:30&amp;per=24h</code>) so you
+            can bookmark or share the result. Like any web address, it is kept in your browser
+            history. To remove the saved entries, clear this site’s data in your browser settings.
+          </p>
+          <h3>Chrome extension</h3>
+          <p>
+            The extension saves the following in <code>chrome.storage.local</code>, which stays on
+            your computer and is not synced to your Google account:
+          </p>
+          <ul>
+            <li><code>checkin-calculator.settings</code>: your theme and interface language.</li>
+            <li><code>checkin-calculator.zone</code>: your time-zone choice.</li>
+            <li>
+              <code>checkin-calculator.lastInput</code>: the last airport, departure date and time,
+              and check-in window you entered, so the popup reopens on your last answer.
+            </li>
+          </ul>
+          <p>
+            Uninstalling the extension deletes all of this. Chrome’s “Clear browsing data” does not
+            remove extension storage.
+          </p>
+
+          <h2 id="network">Network requests and third parties</h2>
+          <h3>Website hosting (GitHub Pages)</h3>
+          <p>
+            GitHub hosts the website on GitHub Pages. When you open a page, your browser requests it
+            from GitHub’s servers. Like any web server, they receive your IP address, your browser’s
+            user agent and the address you requested, including any flight details in a shared link.
+            GitHub logs visitor IP addresses for security purposes, as described in the
+            <a
+              href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement"
+              >GitHub General Privacy Statement</a
+            >. We have no access to these logs, and the site uses no analytics.
+          </p>
+          <h3>Fonts (website only)</h3>
+          <p>
+            The website loads its Geist fonts from Google Fonts (<code>fonts.googleapis.com</code>
+            and <code>fonts.gstatic.com</code>). As part of that request, Google receives your IP
+            address and browser details. The site sends only its own origin as the referrer, so your
+            flight details are not part of this request. See Google’s
+            <a href="https://developers.google.com/fonts/faq/privacy">Google Fonts privacy FAQ</a>.
+            The extension includes its fonts in its package and makes no such request.
+          </p>
+          <h3>Add to Google Calendar (only when you click it)</h3>
+          <p>
+            This button opens <code>calendar.google.com</code> in a new tab with a pre-filled event.
+            The event details travel in that address: a title with the airport code, the check-in
+            opening time, the airport’s name and location, and a description with the opening and
+            departure times and a link back to the calculator. Nothing is saved to your calendar
+            until you confirm it on Google’s page. Google handles that data under the
+            <a href="https://policies.google.com/privacy">Google Privacy Policy</a>.
+          </p>
+          <h3>Actions that stay on your device</h3>
+          <ul>
+            <li>
+              <strong>Download .ics</strong> creates the calendar file inside your browser and saves
+              it through your browser’s normal download.
+            </li>
+            <li>
+              <strong>Copy link</strong> writes a link with your current inputs to your clipboard.
+              The clipboard is used only when you click this button. Nothing is sent unless you
+              paste and open that link yourself.
+            </li>
+          </ul>
+          <h3>Google Search Console</h3>
+          <p>
+            The website is registered in Google Search Console to confirm who owns it. Search
+            Console shows us only aggregated statistics about how the site appears in Google Search
+            results, such as how often it was shown or clicked. It does not identify visitors and
+            adds no code or cookies to the site.
+          </p>
+          <h3>What the extension can access</h3>
+          <p>
+            The extension requests one permission, <code>storage</code>, which it uses to save the
+            entries listed above. It requests no host permissions, so it cannot read or change the
+            websites you visit. It runs no remote code and makes no network requests on its own.
+            Links you choose to open from it, such as the one to this website, open in your browser
+            as normal.
+          </p>
+
+          <h2 id="what-we-dont-do">What we don’t do</h2>
+          <ul>
+            <li>We do not sell or transfer user data to third parties.</li>
+            <li>
+              We do not use or transfer user data for any purpose unrelated to calculating when
+              check-in opens.
+            </li>
+            <li>
+              We do not use or transfer user data to determine creditworthiness or for lending.
+            </li>
+          </ul>
+          <p>
+            The extension’s use of data complies with the Chrome Web Store User Data Policy,
+            including its Limited Use requirements.
+          </p>
+
+          <h2 id="children">Children</h2>
+          <p>
+            Check-in Calculator is not directed at children under 13. It does not collect personal
+            information from anyone, including children.
+          </p>
+
+          <h2 id="your-choices">Your choices</h2>
+          <p>
+            We hold no personal data about you, so there is nothing for us to access, correct or
+            delete. Everything the website or extension saves is on your own device and under your
+            control, as described above. To ask GitHub or Google about data they process, contact
+            them under their own privacy policies.
+          </p>
+
+          <h2 id="changes">Changes to this policy</h2>
+          <p>
+            If this policy changes, we will update the date at the top of this page and publish the
+            new version at this same address. Every past version is public in the
+            <a href="https://github.com/Rusewww/check-in_calculator/commits/main/privacy.html"
+              >history of this page</a
+            >
+            in the website’s source repository.
+          </p>
+
+          <h2 id="contact">Contact</h2>
+          <p>
+            Questions about this policy or about how the website or extension handle data can be
+            raised on the project’s
+            <a href="https://github.com/Rusewww/check-in_calculator/issues">GitHub issue tracker</a
+            >. Issues are public, so please don’t include personal information in them.
+          </p>
+        </article>
+      </main>
+
+      <footer class="app-footer">
+        <p>
+          Source code:
+          <a href="https://github.com/Rusewww/check-in_calculator">website</a> ·
+          <a href="https://github.com/Rusewww/check-in_calculator_chrome_extension"
+            >Chrome extension</a
+          >
+        </p>
+      </footer>
+    </div>
+    <script type="module" src="/src/web/privacy.js"></script>
+  </body>
+</html>

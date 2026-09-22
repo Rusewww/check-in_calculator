@@ -10,4 +10,5 @@ mountApp(root, {
   dataUrl: `${base}data/airports.json`,
   metaUrl: `${base}data/airports.meta.json`,
   repoUrl: 'https://github.com/Rusewww/check-in_calculator',
+  privacyUrl: `${base}privacy.html`,
 });

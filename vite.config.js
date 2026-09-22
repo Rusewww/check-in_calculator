@@ -1,4 +1,5 @@
 /// <reference types="vitest/config" />
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 
 // Base path is "/" for local development. The GitHub Pages deploy workflow sets
@@ -8,6 +9,13 @@ export default defineConfig({
   build: {
     target: 'es2022',
     sourcemap: true,
+    rolldownOptions: {
+      // Two pages: the calculator and the privacy policy the Chrome Web Store links to.
+      input: {
+        main: fileURLToPath(new URL('./index.html', import.meta.url)),
+        privacy: fileURLToPath(new URL('./privacy.html', import.meta.url)),
+      },
+    },
   },
   test: {
     environment: 'node',

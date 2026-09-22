@@ -119,6 +119,7 @@ const en = {
   footerData: 'Airport data: OurAirports (public domain) and mwgg/Airports (MIT).',
   footerDataUpdated: 'Airport list updated: {date}',
   footerSource: 'Source code on GitHub',
+  footerPrivacy: 'Privacy policy',
 };
 
 /** @typedef {keyof typeof en} StringKey */
@@ -224,6 +225,7 @@ const uk = {
   footerData: 'Дані про аеропорти: OurAirports (суспільне надбання) та mwgg/Airports (MIT).',
   footerDataUpdated: 'Список аеропортів оновлено: {date}',
   footerSource: 'Вихідний код на GitHub',
+  footerPrivacy: 'Політика конфіденційності',
 };
 
 /** @type {Record<StringKey, StringValue>} */
@@ -329,6 +331,7 @@ const de = {
   footerData: 'Flughafendaten: OurAirports (gemeinfrei) und mwgg/Airports (MIT).',
   footerDataUpdated: 'Flughafenliste aktualisiert: {date}',
   footerSource: 'Quellcode auf GitHub',
+  footerPrivacy: 'Datenschutzerklärung',
 };
 
 /** @type {Record<LanguageCode, Record<StringKey, StringValue>>} */

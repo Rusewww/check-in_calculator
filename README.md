@@ -108,3 +108,7 @@ The site is registered in Google Search Console. The verification file
 
 Airport data: OurAirports contributors (public domain) and mwgg/Airports (MIT; the
 licence text is embedded in `public/data/airports.meta.json`).
+
+## Background
+
+I first built this tool at work for a concierge team. This repository is my independent public re-implementation, improved since then.

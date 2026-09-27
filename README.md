@@ -5,6 +5,10 @@ and in yours, and add that moment to your calendar.
 
 Live site: https://rusewww.github.io/check-in_calculator/
 
+## Background
+
+I first built this tool at work for a concierge team. This repository is my independent public re-implementation, improved since then.
+
 ## What it does
 
 1. Pick the departure airport by IATA code (or airport / city name).
@@ -108,7 +112,3 @@ The site is registered in Google Search Console. The verification file
 
 Airport data: OurAirports contributors (public domain) and mwgg/Airports (MIT; the
 licence text is embedded in `public/data/airports.meta.json`).
-
-## Background
-
-I first built this tool at work for a concierge team. This repository is my independent public re-implementation, improved since then.

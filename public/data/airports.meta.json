@@ -1,10 +1,10 @@
 {
-  "generated": "2026-09-13T15:48:44.984Z",
-  "count": 9055,
+  "generated": "2026-10-01T11:36:35.901Z",
+  "count": 9051,
   "scheduledService": 4133,
   "timeZoneSources": {
     "mwgg": 7803,
-    "geo-tz": 1252
+    "geo-tz": 1248
   },
   "fields": [
     "iata",
